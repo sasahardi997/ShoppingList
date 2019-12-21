@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(new Intent(getApplicationContext(),HomeActivity.class));
                             Toast.makeText(getApplicationContext(),"Successful",Toast.LENGTH_SHORT).show();
                             mDialog.dismiss();
+                            finish();
+                            return;
                         }else {
                             Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
                             mDialog.dismiss();
