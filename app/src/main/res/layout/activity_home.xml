@@ -55,7 +55,7 @@
                         android:layout_weight="2">
 
                         <TextView
-                            android:id="@+id/total_ammount"
+                            android:id="@+id/total_amount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="000000"

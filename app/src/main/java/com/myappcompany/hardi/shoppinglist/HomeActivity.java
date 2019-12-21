@@ -1,5 +1,6 @@
 package com.myappcompany.hardi.shoppinglist;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,8 +20,11 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.myappcompany.hardi.shoppinglist.model.Data;
 import com.myappcompany.hardi.shoppinglist.recycler.MyViewHolder;
 
@@ -38,6 +42,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
+    private TextView totalsumResult;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +53,7 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Shopping List");
 
+        totalsumResult=findViewById(R.id.total_amount);
 
 
         mAuth=FirebaseAuth.getInstance();
@@ -68,9 +75,33 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
 
+        //Total sum number
+
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                int totalAmount = 0;
+
+                for(DataSnapshot snap:dataSnapshot.getChildren()){
+                    Data data=snap.getValue(Data.class);
+                    totalAmount+=data.getAmount();
+
+                    String sTOTAL=String.valueOf(totalAmount);
+                    totalsumResult.setText(sTOTAL+"$");
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
 
         fab_btn=findViewById(R.id.fab);
-
         fab_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,10 +185,31 @@ public class HomeActivity extends AppCompatActivity {
                 viewHolder.setNote(model.getNote());
                 viewHolder.setAmount(model.getAmount());
 
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        updateData();
+                    }
+                });
+
             }
         };
 
         recyclerView.setAdapter(adapter);
+    }
+
+    public void updateData(){
+        AlertDialog.Builder myDialog=new AlertDialog.Builder(HomeActivity.this);
+        LayoutInflater inflater=LayoutInflater.from(HomeActivity.this);
+        View mView=inflater.inflate(R.layout.update_inputfield,null);
+
+        AlertDialog dialog=myDialog.create();
+        dialog.setView(mView);
+
+
+        dialog.show();
 
     }
+
+
 }
