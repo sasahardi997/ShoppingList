@@ -36,9 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
 
-        if(mAuth.getCurrentUser()!=null){
-            startActivity(new Intent(getApplicationContext(),HomeActivity.class));
-        }
 
         mDialog=new ProgressDialog(this);
 
@@ -74,11 +71,12 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
 
-                            startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+                            Intent intent=new Intent(MainActivity.this,HomeActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
                             Toast.makeText(getApplicationContext(),"Successful",Toast.LENGTH_SHORT).show();
                             mDialog.dismiss();
-                            finish();
-                            return;
                         }else {
                             Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
                             mDialog.dismiss();
